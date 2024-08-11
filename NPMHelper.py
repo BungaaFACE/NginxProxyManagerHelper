@@ -19,11 +19,11 @@ if __name__ == "__main__":
                         help='project folder for locations', dest='project_name')
     parser.add_argument("--forward_scheme", "-fs",
                         type=str, default='http',
-                        help='forward ip for proxy, default=http',
+                        help='forward scheme, default=http',
                         choices=['http', 'https'], dest='forward_scheme')
     parser.add_argument("--force_ssl", "-ssl",
                         type=str, default=True,
-                        help='forward ip for proxy, default=True',
+                        help='make strict ssl, default=True',
                         choices=[True, False], dest='ssl_forced')
     args = parser.parse_args()
     with NPM_client() as npm:

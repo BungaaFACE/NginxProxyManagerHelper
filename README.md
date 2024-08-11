@@ -16,8 +16,8 @@ With that tool you can create proxy for domain with command line using your gitl
   
 ## Usage
 Tool can be run from command line:  
-`.venv/bin/python main.py --domain DOMAIN --forward_host FORWARD_HOST --forward_port FORWARD_PORT --project_name PROJECT_NAME [--forward_scheme {http,https}] [--force_ssl {True,False}]`  
-List of arguments can be viewed with `python main.py -h` or in the next section.  
+`.venv/bin/python NPMHelper.py --domain DOMAIN --forward_host FORWARD_HOST --forward_port FORWARD_PORT --project_name PROJECT_NAME [--forward_scheme {http,https}] [--force_ssl {True,False}]`  
+List of arguments can be viewed with `python NPMHelper.py -h` or in the next section.  
   
 ## Arguments
 | Argument | Required | Description |
