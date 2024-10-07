@@ -47,7 +47,7 @@ class NPM_client:
         hosts = list(filter(lambda host: host['forward_host'] == forward_host and host['forward_port'] == forward_port))
         logging.info(f'Deleting {forward_host}:{forward_port} proxies. Got {len(hosts)}.')
         for host in hosts:
-            response = requests.delete(f'{self.api_url}/nginx/proxy-hosts/{str(host['id'])}',
+            response = requests.delete(f'{self.api_url}/nginx/proxy-hosts/{str(host["id"])}',
                                        headers={'Authorization': self.token})
             response.raise_for_status()
         logging.info(f'Destination {forward_host}:{forward_port} deleted')
@@ -55,7 +55,7 @@ class NPM_client:
     def delete_domain(self, domain: str, host: dict):
         if len(host['domain_names']) == 1:
             logging.info('Proxy has single domain, deleting proxy')
-            response = requests.delete(f'{self.api_url}/nginx/proxy-hosts/{str(host['id'])}',
+            response = requests.delete(f'{self.api_url}/nginx/proxy-hosts/{str(host["id"])}',
                                        headers={'Authorization': self.token})
         else:
             logging.info('Proxy has multiple domains, removing domain from proxy')
