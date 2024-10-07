@@ -79,7 +79,7 @@ class NPM_client:
                 if forward_host and forward_host != host['forward_host'] or \
                         int(forward_port) and forward_port != host['forward_port']:
                     logging.info(f'Proxy for domain {domain} already created, but forward host is different.'
-                                 f'{forward_host}:{forward_port} (new) != (exist) {host['forward_host']}:{host['forward_port']}')
+                                 f'{forward_host}:{forward_port} (new) != (exist) {host["forward_host"]}:{host["forward_port"]}')
                     if delete_inconsistent:
                         self.delete_domain(domain, host)
                         return
