@@ -1,0 +1,41 @@
+variables:
+  PROJECT_NAME: "NginxProxyManagerHelper"
+  PROJECT_DIR: "/data/$PROJECT_NAME"
+
+stages:
+  - init
+  - deploy
+
+.ct_prepare: &ct_prepare
+    - echo "PYTHON3-PIP|VENV INSTALL"
+    - sudo apt -y install python3-pip python3.11-venv
+    - echo "CREATING FOLDER IF NOT EXIST"
+    - mkdir -p $PROJECT_DIR
+    - echo "CREATING VENV ON CT"
+    - test -e $PROJECT_DIR/.venv || /usr/bin/python3 -m venv $PROJECT_DIR/.venv
+
+.update_script: &update_script
+    - echo "COPY LAST VERSION"
+    - cp -r ./* $PROJECT_DIR
+    - echo "CHANGING RIGHTS TO 755"
+    - chmod -R 755 $PROJECT_DIR
+    - echo "INSTALLING REQUIREMENTS"
+    - $PROJECT_DIR/.venv/bin/pip install -r $PROJECT_DIR/requirements.txt
+
+init_job:
+  stage: init
+  tags:
+    - ct_shell
+  script:
+    - *ct_prepare
+  allow_failure: false
+  when: manual
+
+deploy_job:
+  stage: deploy
+  tags:
+    - ct_shell
+  script:
+    - *update_script
+  allow_failure: false
+  when: manual
