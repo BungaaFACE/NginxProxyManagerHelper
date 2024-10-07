@@ -36,6 +36,7 @@ init_job:
   tags:
     - ct_shell
   script:
+    - *ssh_prepare
     - *ct_prepare
   allow_failure: false
   needs: []
