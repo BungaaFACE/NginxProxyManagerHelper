@@ -22,12 +22,13 @@ List of arguments can be viewed with `python NPMHelper.py -h` or in the next sec
 ## Arguments
 | Argument | Required | Description |
 |----------|----------|-------------|
-|--domain/-d|Yes|domain for proxy|
+|--domain/-d|No|domain for proxy, required for adding proxy|
 |--forward_host/-fh|Yes|forward ip for proxy|
 |--forward_port/-fp|Yes|forward port for proxy|
-|--project_name/n|Yes|project folder name for locations|
+|--project_name/n|No|project folder name for locations, dont add location if not specified|
 |--forward_scheme/-fs|No|forward scheme, default=http|
 |--force_ssl/-ssl|No|make strict ssl, default=True|
+|--delete/-dl|No|delete forward host:port proxies, default=False |
   
 ## New features
 You can suggest new feature or report a bug in the issues.  

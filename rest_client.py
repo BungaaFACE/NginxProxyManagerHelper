@@ -42,6 +42,16 @@ class NPM_client:
                                 headers={'Authorization': self.token})
         return response.json()
 
+    def delete_forward_dest(self, forward_host: str, forward_port: int):
+        hosts = self.get_proxy_hosts()
+        hosts = list(filter(lambda host: host['forward_host'] == forward_host and host['forward_port'] == forward_port))
+        logging.info(f'Deleting {forward_host}:{forward_port} proxies. Got {len(hosts)}.')
+        for host in hosts:
+            response = requests.delete(f'{self.api_url}/nginx/proxy-hosts/{str(host['id'])}',
+                                       headers={'Authorization': self.token})
+            response.raise_for_status()
+        logging.info(f'Destination {forward_host}:{forward_port} deleted')
+
     def delete_domain(self, domain: str, host: dict):
         if len(host['domain_names']) == 1:
             logging.info('Proxy has single domain, deleting proxy')
@@ -79,42 +89,45 @@ class NPM_client:
     def add_proxy(self, domain: str,
                   forward_host: str,
                   forward_port: int,
-                  project_name: str,
+                  project_name: str = None,
                   forward_scheme: str = 'http',
                   ssl_forced: bool = True):
         if not self.is_proxy_exist(domain, forward_host, forward_port):
             # TODO get or create ssl cert id for domain
+            json = {
+                "forward_scheme": forward_scheme,
+                "forward_host": forward_host,
+                "forward_port": int(forward_port),
+                "advanced_config": "",
+                "domain_names": [domain],
+                "access_list_id": "0",
+                "certificate_id": 1,
+                "ssl_forced": ssl_forced,
+                "meta": {
+                    "letsencrypt_agree": False,
+                    "dns_challenge": False
+                },
+
+                "block_exploits": True,
+                "caching_enabled": False,
+                "allow_websocket_upgrade": False,
+                "http2_support": False,
+                "hsts_enabled": False,
+                "hsts_subdomains": False
+            }
+            if project_name:
+                json = json | {"locations": [
+                    {
+                        "path": "staticfiles",
+                        "advanced_config": "",
+                        "forward_scheme": forward_scheme,
+                        "forward_host": f"{forward_host}/data/{project_name}/staticfiles",
+                        "forward_port": str(forward_port)
+                    }
+                ]}
             response = requests.post(f'{self.api_url}/nginx/proxy-hosts',
                                      headers={'Authorization': self.token},
-                                     json={
-                                         "forward_scheme": forward_scheme,
-                                         "forward_host": forward_host,
-                                         "forward_port": int(forward_port),
-                                         "advanced_config": "",
-                                         "domain_names": [domain],
-                                         "access_list_id": "0",
-                                         "certificate_id": 1,
-                                         "ssl_forced": ssl_forced,
-                                         "meta": {
-                                             "letsencrypt_agree": False,
-                                             "dns_challenge": False
-                                         },
-                                         "locations": [
-                                             {
-                                                 "path": "staticfiles",
-                                                 "advanced_config": "",
-                                                 "forward_scheme": forward_scheme,
-                                                 "forward_host": f"{forward_host}/data/{project_name}/staticfiles",
-                                                 "forward_port": str(forward_port)
-                                             }
-                                         ],
-                                         "block_exploits": True,
-                                         "caching_enabled": False,
-                                         "allow_websocket_upgrade": False,
-                                         "http2_support": False,
-                                         "hsts_enabled": False,
-                                         "hsts_subdomains": False
-            })
+                                     json=json)
             response.raise_for_status()
             logging.info('Proxy created')
         else:
@@ -123,9 +136,12 @@ class NPM_client:
 
 if __name__ == "__main__":
     with NPM_client() as npm:
-        npm.add_proxy(
-            domain='test_domain',
-            forward_host='192.168.1.254',
-            forward_port=8081,
-            project_name='test_project'
-        )
+        # npm.add_proxy(
+        #     domain='test_domain',
+        #     forward_host='192.168.1.254',
+        #     forward_port=8081,
+        #     project_name='test_project'
+        # )
+        hosts = npm.get_proxy_hosts()
+    from pprint import pprint
+    pprint(hosts)
