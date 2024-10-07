@@ -29,6 +29,7 @@ init_job:
   script:
     - *ct_prepare
   allow_failure: false
+  needs: []
   when: manual
 
 deploy_job:
@@ -38,4 +39,5 @@ deploy_job:
   script:
     - *update_script
   allow_failure: false
+  needs: []
   when: manual
